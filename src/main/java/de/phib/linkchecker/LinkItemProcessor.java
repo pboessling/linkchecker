@@ -8,7 +8,10 @@ import org.apache.http.ssl.TrustStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.ItemProcessor;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.client.HttpClientErrorException;
@@ -28,6 +31,7 @@ public class LinkItemProcessor implements ItemProcessor<Link, Link> {
     /**
      * Processes a Link by sending an http get request to the url of the given link, and returning a new Link wrapping
      * the url and the http response status code.
+     *
      * @param link the link
      * @return a new link wrapping the url and the status code
      */
@@ -35,13 +39,16 @@ public class LinkItemProcessor implements ItemProcessor<Link, Link> {
     public Link process(final Link link) {
         RestTemplate restTemplate = new RestTemplate(clientHttpRequestFactory());
         String url = link.getUrl();
-        int status;
+        int status = -1;
 
         try {
-            ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<>(new HttpHeaders()), String.class);
+            ResponseEntity<String> response = restTemplate
+                    .exchange(url, HttpMethod.GET, new HttpEntity<>(new HttpHeaders()), String.class);
             status = response.getStatusCode().value();
         } catch (HttpClientErrorException | HttpServerErrorException httpClientOrServerException) {
             status = httpClientOrServerException.getStatusCode().value();
+        } catch (Exception e) {
+            LOG.error("An error occured, while trying to access url '" + url + "'. Message: " + e.getMessage());
         }
 
         final Link checkedLink = new Link(url, status);
@@ -52,6 +59,7 @@ public class LinkItemProcessor implements ItemProcessor<Link, Link> {
 
     /**
      * Creates a ClientHttpRequestFactory.
+     *
      * @return a ClientHttpRequestFactory
      */
     private ClientHttpRequestFactory clientHttpRequestFactory() {
@@ -68,6 +76,7 @@ public class LinkItemProcessor implements ItemProcessor<Link, Link> {
 
     /**
      * Creates a CloseableHttpClient.
+     *
      * @return a CloseableHttpClient
      */
     private CloseableHttpClient httpClient() {

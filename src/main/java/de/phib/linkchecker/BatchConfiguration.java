@@ -34,6 +34,7 @@ public class BatchConfiguration {
 
     /**
      * Creates a FlatFileItemReader.
+     *
      * @return a FlatFileItemReader
      */
     @Bean
@@ -51,6 +52,7 @@ public class BatchConfiguration {
 
     /**
      * Creates a FlatFileItemWriter.
+     *
      * @return a FlatFileItemWriter
      */
     @Bean
@@ -69,6 +71,7 @@ public class BatchConfiguration {
 
     /**
      * Creates a LinkItemProcessor.
+     *
      * @return a LinkItemProcessor
      */
     @Bean
@@ -78,8 +81,9 @@ public class BatchConfiguration {
 
     /**
      * Creates a Job for checking links.
+     *
      * @param listener a JobCompletionNotificationListener
-     * @param step1 a Step
+     * @param step1    a Step
      * @return a Job for checking links
      */
     @Bean
@@ -94,6 +98,7 @@ public class BatchConfiguration {
 
     /**
      * Creates a Step for checking links.
+     *
      * @param writer a FlatFileItemWriter
      * @return a Step for checking links.
      */

@@ -11,6 +11,7 @@ public class Application {
 
     /**
      * The main method.
+     *
      * @param args the arguments for the main method
      */
     public static void main(String[] args) throws Exception {
