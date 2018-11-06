@@ -19,6 +19,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 
+/**
+ * A batch configuration for checking links
+ */
 @Configuration
 @EnableBatchProcessing
 public class BatchConfiguration {
@@ -29,6 +32,10 @@ public class BatchConfiguration {
     @Autowired
     public StepBuilderFactory stepBuilderFactory;
 
+    /**
+     * Creates a FlatFileItemReader.
+     * @return a FlatFileItemReader
+     */
     @Bean
     public FlatFileItemReader<Link> reader() {
         return new FlatFileItemReaderBuilder<Link>()
@@ -42,6 +49,10 @@ public class BatchConfiguration {
                 .build();
     }
 
+    /**
+     * Creates a FlatFileItemWriter.
+     * @return a FlatFileItemWriter
+     */
     @Bean
     public FlatFileItemWriter<Link> writer() {
         return new FlatFileItemWriterBuilder<Link>()
@@ -56,11 +67,21 @@ public class BatchConfiguration {
                 .build();
     }
 
+    /**
+     * Creates a LinkItemProcessor.
+     * @return a LinkItemProcessor
+     */
     @Bean
     public LinkItemProcessor processor() {
         return new LinkItemProcessor();
     }
 
+    /**
+     * Creates a Job for checking links.
+     * @param listener a JobCompletionNotificationListener
+     * @param step1 a Step
+     * @return a Job for checking links
+     */
     @Bean
     public Job checkLinksJob(JobCompletionNotificationListener listener, Step step1) {
         return jobBuilderFactory.get("checkLinksJob")
@@ -71,6 +92,11 @@ public class BatchConfiguration {
                 .build();
     }
 
+    /**
+     * Creates a Step for checking links.
+     * @param writer a FlatFileItemWriter
+     * @return a Step for checking links.
+     */
     @Bean
     public Step step1(FlatFileItemWriter<Link> writer) {
         return stepBuilderFactory.get("step1")

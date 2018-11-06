@@ -18,10 +18,19 @@ import org.springframework.web.client.RestTemplate;
 import javax.net.ssl.SSLContext;
 import java.security.cert.X509Certificate;
 
+/**
+ * ItemProcessor, which performs the link checking.
+ */
 public class LinkItemProcessor implements ItemProcessor<Link, Link> {
 
     private static final Logger LOG = LoggerFactory.getLogger(LinkItemProcessor.class);
 
+    /**
+     * Processes a Link by sending an http get request to the url of the given link, and returning a new Link wrapping
+     * the url and the http response status code.
+     * @param link the link
+     * @return a new link wrapping the url and the status code
+     */
     @Override
     public Link process(final Link link) {
         RestTemplate restTemplate = new RestTemplate(clientHttpRequestFactory());
@@ -31,15 +40,8 @@ public class LinkItemProcessor implements ItemProcessor<Link, Link> {
         try {
             ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<>(new HttpHeaders()), String.class);
             status = response.getStatusCode().value();
-        } catch (HttpClientErrorException | HttpServerErrorException httpClientOrServerExc) {
-            if (HttpStatus.NOT_FOUND.equals(httpClientOrServerExc.getStatusCode())) {
-                // your handling of "NOT FOUND" here
-                // e.g. throw new RuntimeException("Your Error Message here", httpClientOrServerExc);
-            } else {
-                // your handling of other errors here
-            }
-
-            status = httpClientOrServerExc.getStatusCode().value();
+        } catch (HttpClientErrorException | HttpServerErrorException httpClientOrServerException) {
+            status = httpClientOrServerException.getStatusCode().value();
         }
 
         final Link checkedLink = new Link(url, status);
@@ -48,6 +50,10 @@ public class LinkItemProcessor implements ItemProcessor<Link, Link> {
         return checkedLink;
     }
 
+    /**
+     * Creates a ClientHttpRequestFactory.
+     * @return a ClientHttpRequestFactory
+     */
     private ClientHttpRequestFactory clientHttpRequestFactory() {
         int timeout = 5000;
 
@@ -60,6 +66,10 @@ public class LinkItemProcessor implements ItemProcessor<Link, Link> {
         return clientHttpRequestFactory;
     }
 
+    /**
+     * Creates a CloseableHttpClient.
+     * @return a CloseableHttpClient
+     */
     private CloseableHttpClient httpClient() {
         CloseableHttpClient httpClient = null;
 

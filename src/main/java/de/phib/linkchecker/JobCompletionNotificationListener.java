@@ -7,6 +7,9 @@ import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.listener.JobExecutionListenerSupport;
 import org.springframework.stereotype.Component;
 
+/**
+ * A JobCompletionNotificationListener, which is called after the batch job has finished.
+ */
 @Component
 public class JobCompletionNotificationListener extends JobExecutionListenerSupport {
 
