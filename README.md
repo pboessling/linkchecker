@@ -20,9 +20,9 @@ Checks the status codes of a given list of links.
     ```
 - A file `/output.csv` will be created, which lists the urls with their respective status code.
     ```
-     http://example.com;200
-     http://example.com;200
-     http://example.com;200   
+    http://example.com;200
+    http://example.com;200
+    http://example.com;200   
     ```
 
 ## License
